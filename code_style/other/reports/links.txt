@@ -1,0 +1,14 @@
+https://github.com/mattpocock/skills/blob/main/skills/engineering/improve-codebase-architecture/HTML-REPORT.md
+
+https://www.geoffreylitt.com/2026/07/02/understanding-is-the-new-bottleneck.html
+
+https://gist.github.com/fofr/505e225f9bf5e839d30c12ba6bfa0be2
+
+
+"lately after a big change instead of reading the diff i ask the agent for a summary of what it did in each file 
+anything weird sticks out immediately and 1-2 prompts later it's completely as i want it
+files + functions signatures i need to know, care less about function body" - thdxr
+
+"walk me through your architectural changes (before/after) in an html file: modules and their dependencies, seams, function signatures, etc. use visuals like mermaid diagrams."
+
+https://www.asd-ste100.org/

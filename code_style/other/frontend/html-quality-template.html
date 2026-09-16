@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HTML Quality Template</title>
+  <style>
+    :root {
+      --ink: #17130d;
+      --muted: #5f5748;
+      --paper: #f6efe0;
+      --panel: #fffaf0;
+      --panel-strong: #fff4d3;
+      --line: #231c12;
+      --red: #a72b22;
+      --red-soft: #f7d8d3;
+      --blue: #0d6378;
+      --blue-soft: #d8edf2;
+      --green: #2f7041;
+      --green-soft: #dcefdc;
+      --gold: #c68100;
+      --gold-soft: #fae8bb;
+      --code-bg: #fff8e8;
+      --code-border: #8f7b54;
+      --code-text: #17130d;
+      --code-comment: #615846;
+      --code-keyword: #8b1e17;
+      --code-string: #0c5d3b;
+      --code-function: #0d6378;
+      --shadow: 8px 8px 0 var(--ink);
+      --focus: #0b5fff;
+    }
+
+    /*
+      Verified color pairs, WCAG contrast ratios:
+      --ink on --paper: 16.08:1; --ink on --panel: 17.71:1; --muted on --paper: 6.41:1;
+      --paper on --ink: 16.08:1; --ink on --gold: 6.45:1; --paper on --red: 7.09:1;
+      --ink on --red-soft: 12.97:1; --ink on --blue-soft: 14.38:1; --ink on --green-soft: 14.61:1;
+      --ink on --gold-soft: 14.61:1; --code-text on --code-bg: 17.06:1;
+      --code-comment on --code-bg: 6.77:1; --code-keyword on --code-bg: 10.22:1;
+      --code-string on --code-bg: 7.79:1; --code-function on --code-bg: 6.50:1.
+    */
+
+    /* Defensive CSS: make generated reports resist common LLM layout failures by default. */
+    * { box-sizing: border-box; }
+    table { table-layout: fixed; width: 100%; }
+    td, th { overflow-wrap: break-word; word-break: break-word; }
+    pre, code { overflow-x: auto; max-width: 100%; white-space: pre-wrap; word-break: break-all; }
+    img, svg { max-width: 100%; height: auto; }
+    .shell, .container, main { max-width: 1240px; margin: 0 auto; overflow: hidden; }
+
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(23, 19, 13, .06) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(23, 19, 13, .05) 1px, transparent 1px),
+        var(--paper);
+      background-size: 28px 28px;
+      font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+      line-height: 1.5;
+    }
+    a { color: var(--blue); font-weight: 700; }
+    a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+    .shell { padding: 28px; }
+    header.hero {
+      min-height: 88vh;
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 36px;
+      align-items: center;
+      border-bottom: 4px solid var(--line);
+      padding-bottom: 32px;
+    }
+    .kicker {
+      display: inline-block;
+      border: 2px solid var(--line);
+      padding: 5px 10px;
+      background: var(--gold);
+      color: var(--ink);
+      font-family: "Courier New", ui-monospace, monospace;
+      font-weight: 700;
+      font-size: 13px;
+      transform: rotate(-1deg);
+    }
+    h1, h2, h3 { line-height: .98; margin: 0; letter-spacing: 0; }
+    h1 {
+      font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+      font-size: clamp(54px, 11vw, 142px);
+      text-transform: uppercase;
+      margin: 20px 0 18px;
+    }
+    h2 {
+      font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+      font-size: clamp(34px, 5.4vw, 72px);
+      text-transform: uppercase;
+      border-top: 5px solid var(--line);
+      padding-top: 26px;
+      margin-top: 54px;
+    }
+    h3 {
+      font-family: "Courier New", ui-monospace, monospace;
+      font-size: 18px;
+      text-transform: uppercase;
+      margin: 24px 0 10px;
+    }
+    p { font-size: 18px; margin: 10px 0; }
+    .lead { font-size: clamp(20px, 2vw, 28px); max-width: 780px; }
+    .hero-card, .box, details {
+      background: var(--panel);
+      border: 3px solid var(--line);
+      box-shadow: 4px 4px 0 var(--line);
+    }
+    .hero-card { padding: 22px; transform: rotate(1deg); box-shadow: var(--shadow); }
+    .stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 18px; }
+    .stat { border: 2px solid var(--line); background: var(--panel-strong); padding: 14px; min-height: 116px; }
+    .stat b { display: block; font-family: Impact, sans-serif; font-size: 44px; line-height: .95; }
+    .stat span { font-family: "Courier New", ui-monospace, monospace; font-size: 13px; }
+    nav.toc {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      background: rgba(246, 239, 224, .97);
+      border-bottom: 3px solid var(--line);
+      padding: 10px 0 10px 28px;
+      margin: 0 -28px 24px;
+    }
+    nav.toc a {
+      flex: 0 0 auto;
+      color: var(--ink);
+      text-decoration: none;
+      border: 2px solid var(--line);
+      background: var(--panel);
+      padding: 8px 10px;
+      font-family: "Courier New", ui-monospace, monospace;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 16px; }
+    .span-4 { grid-column: span 4; } .span-5 { grid-column: span 5; } .span-6 { grid-column: span 6; }
+    .span-7 { grid-column: span 7; } .span-8 { grid-column: span 8; } .span-12 { grid-column: span 12; }
+    .box, details { padding: 18px; }
+    .box.red { background: var(--red-soft); } .box.blue { background: var(--blue-soft); }
+    .box.green { background: var(--green-soft); } .box.gold { background: var(--gold-soft); }
+    details { margin: 12px 0; }
+    summary { cursor: pointer; font-family: "Courier New", ui-monospace, monospace; font-weight: 800; text-transform: uppercase; }
+    .pill { display: inline-block; border: 2px solid var(--line); background: #fff; padding: 3px 7px; margin: 2px; font-family: "Courier New", ui-monospace, monospace; font-size: 13px; font-weight: 700; }
+    table { border-collapse: collapse; background: var(--panel); margin: 14px 0; }
+    th, td { border: 2px solid var(--line); padding: 9px; vertical-align: top; }
+    th { background: var(--ink); color: var(--paper); font-family: "Courier New", ui-monospace, monospace; text-align: left; }
+    code, pre { font-family: "Courier New", ui-monospace, monospace; }
+    code { background: #fff3cf; border: 1px solid var(--code-border); color: var(--code-text); padding: 1px 4px; }
+    pre {
+      margin: 12px 0;
+      background: var(--code-bg);
+      color: var(--code-text);
+      border: 3px solid var(--line);
+      padding: 16px;
+      overflow: auto;
+      box-shadow: inset 0 0 0 1px #d5c59d;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    pre code { display: block; padding: 0; border: 0; background: transparent; color: inherit; }
+    .kw { color: var(--code-keyword); font-weight: 700; }
+    .str { color: var(--code-string); }
+    .cm { color: var(--code-comment); font-style: italic; }
+    .fn { color: var(--code-function); font-weight: 700; }
+    svg { display: block; background: var(--panel); border: 3px solid var(--line); }
+    .tabs { margin: 16px 0; }
+    .tab-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tab-buttons button { border: 2px solid var(--line); background: var(--panel); color: var(--ink); padding: 8px 10px; font-family: "Courier New", ui-monospace, monospace; font-weight: 800; cursor: pointer; }
+    .tab-buttons button.active { background: var(--red); color: var(--paper); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .todo { border-left: 10px solid var(--red); background: #fff8df; padding: 14px 16px; margin-top: 14px; font-weight: 700; }
+    .small { font-size: 14px; color: var(--muted); font-family: "Courier New", ui-monospace, monospace; }
+    ul, ol { font-size: 17px; padding-left: 22px; }
+    li { margin: 7px 0; }
+    .quality-badge { position: fixed; right: 12px; bottom: 12px; z-index: 20; border: 2px solid var(--line); background: var(--panel); color: var(--ink); padding: 7px 10px; font: 700 12px "Courier New", ui-monospace, monospace; box-shadow: 3px 3px 0 var(--line); }
+    .quality-badge.warn { background: var(--red); color: var(--paper); }
+    @media (max-width: 860px) {
+      .shell { padding: 18px; }
+      header.hero { grid-template-columns: 1fr; min-height: auto; }
+      .hero-card { transform: none; }
+      .span-4, .span-5, .span-6, .span-7, .span-8 { grid-column: span 12; }
+      .stats { grid-template-columns: 1fr; }
+      nav.toc { margin-left: -18px; margin-right: -18px; padding-left: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <div>
+        <span class="kicker">HTML quality template</span>
+        <h1>Accessible Report</h1>
+        <p class="lead">Start here for generated reports that need strong visual character without fragile contrast, overflowing tables, or unreadable code blocks.</p>
+        <p>The foundation is intentionally opinionated: normalize layout at the edges, use tested color pairs, and ship a small inline validator that makes regressions visible in the console.</p>
+      </div>
+      <div class="hero-card">
+        <svg viewBox="0 0 760 500" role="img" aria-label="Template layout overview">
+          <rect x="0" y="0" width="760" height="500" fill="#fffaf0"></rect>
+          <path d="M58 72 H702 M58 178 H702 M58 322 H702 M58 426 H702" stroke="#231c12" stroke-width="4"></path>
+          <rect x="92" y="104" width="190" height="54" fill="#fae8bb" stroke="#231c12" stroke-width="3"></rect>
+          <rect x="322" y="104" width="345" height="54" fill="#d8edf2" stroke="#231c12" stroke-width="3"></rect>
+          <rect x="92" y="214" width="575" height="76" fill="#fff8e8" stroke="#231c12" stroke-width="3"></rect>
+          <rect x="92" y="356" width="165" height="42" fill="#dcefdc" stroke="#231c12" stroke-width="3"></rect>
+          <rect x="300" y="356" width="165" height="42" fill="#f7d8d3" stroke="#231c12" stroke-width="3"></rect>
+          <rect x="508" y="356" width="159" height="42" fill="#fff4d3" stroke="#231c12" stroke-width="3"></rect>
+          <g font-family="Courier New" font-size="18" font-weight="700" fill="#17130d">
+            <text x="112" y="139">semantic blocks</text>
+            <text x="342" y="139">fixed tables + wrapping code</text>
+            <text x="114" y="258">validator: contrast, overflow, table handling</text>
+            <text x="116" y="383">AA colors</text>
+            <text x="324" y="383">light code</text>
+            <text x="530" y="383">responsive</text>
+          </g>
+        </svg>
+      </div>
+    </header>
+
+    <nav class="toc" aria-label="Report sections">
+      <a href="#elements">Elements</a>
+      <a href="#code">Code</a>
+      <a href="#tables">Tables</a>
+      <a href="#details">Details</a>
+    </nav>
+
+    <section id="elements">
+      <h2>Elements</h2>
+      <div class="grid">
+        <div class="box red span-4"><h3>Boundary</h3><p>External data should be normalized before it enters the trusted report body.</p></div>
+        <div class="box blue span-4"><h3>Invariant</h3><p>Every visible text/background pair is designed to pass WCAG AA.</p></div>
+        <div class="box green span-4"><h3>Fallback</h3><p>Overflow is handled structurally, not by hoping content is short.</p></div>
+      </div>
+    </section>
+
+    <section id="code">
+      <h2>Code Blocks</h2>
+      <p>Code blocks are dark text on a light background because that is the most reliable baseline for generated HTML with syntax spans.</p>
+      <pre><code><span class="cm"># Placeholder code with intentionally long tokens</span>
+<span class="kw">def</span> <span class="fn">normalize_report_input</span>(raw_payload):
+    identifier = <span class="str">"report_section_with_a_very_long_machine_generated_identifier_that_must_wrap_safely"</span>
+    <span class="kw">return</span> {<span class="str">"id"</span>: identifier, <span class="str">"payload"</span>: raw_payload}</code></pre>
+    </section>
+
+    <section id="tables">
+      <h2>Tables</h2>
+      <table>
+        <tr><th>Rule</th><th>Why it exists</th><th>Failure prevented</th></tr>
+        <tr><td><code>table-layout: fixed</code></td><td>Columns obey the container instead of the longest token.</td><td>Wide code strings cannot push the page sideways.</td></tr>
+        <tr><td><code>overflow-wrap</code></td><td>Generated identifiers and URLs can break inside cells.</td><td><code>artifact://very/long/generated/path/that/should/wrap/instead/of/overflowing</code></td></tr>
+      </table>
+    </section>
+
+    <section id="details">
+      <h2>Collapsible Sections</h2>
+      <details open>
+        <summary>Implementation note</summary>
+        <p>Use details for secondary proof, raw logs, examples, or source snippets that should be available without dominating the first reading layer.</p>
+      </details>
+    </section>
+  </main>
+  <script>
+    (function () {
+      const SHOW_BADGE = true;
+      const issues = [];
+
+      function parseColor(value) {
+        const match = value.match(/rgba?\(([^)]+)\)/);
+        if (!match) return null;
+        const parts = match[1].split(',').map((part) => Number.parseFloat(part.trim()));
+        return { r: parts[0], g: parts[1], b: parts[2], a: parts.length > 3 ? parts[3] : 1 };
+      }
+
+      function blend(fg, bg) {
+        const alpha = fg.a == null ? 1 : fg.a;
+        return {
+          r: fg.r * alpha + bg.r * (1 - alpha),
+          g: fg.g * alpha + bg.g * (1 - alpha),
+          b: fg.b * alpha + bg.b * (1 - alpha),
+          a: 1
+        };
+      }
+
+      function luminance(color) {
+        const channel = [color.r, color.g, color.b].map((value) => {
+          const normalized = value / 255;
+          return normalized <= 0.03928 ? normalized / 12.92 : Math.pow((normalized + 0.055) / 1.055, 2.4);
+        });
+        return 0.2126 * channel[0] + 0.7152 * channel[1] + 0.0722 * channel[2];
+      }
+
+      function contrastRatio(foreground, background) {
+        const l1 = luminance(foreground);
+        const l2 = luminance(background);
+        return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+      }
+
+      function effectiveBackground(element) {
+        let node = element;
+        let background = { r: 255, g: 255, b: 255, a: 1 };
+        while (node && node.nodeType === Node.ELEMENT_NODE) {
+          const parsed = parseColor(getComputedStyle(node).backgroundColor);
+          if (parsed && parsed.a > 0) {
+            background = parsed.a < 1 ? blend(parsed, background) : parsed;
+            if (parsed.a === 1) break;
+          }
+          node = node.parentElement;
+        }
+        return background;
+      }
+
+      function hasText(element) {
+        return Array.from(element.childNodes).some((node) => node.nodeType === Node.TEXT_NODE && node.textContent.trim().length > 0);
+      }
+
+      document.querySelectorAll('body *').forEach((element) => {
+        if (element.closest('svg') && element.tagName.toLowerCase() !== 'svg') return;
+        const style = getComputedStyle(element);
+        if (style.display === 'none' || style.visibility === 'hidden') return;
+        if (hasText(element)) {
+          const color = parseColor(style.color);
+          const bg = effectiveBackground(element);
+          if (color) {
+            const ratio = contrastRatio(color.a < 1 ? blend(color, bg) : color, bg);
+            const fontSize = Number.parseFloat(style.fontSize);
+            const fontWeight = Number.parseInt(style.fontWeight, 10) || 400;
+            const largeText = fontSize >= 24 || (fontSize >= 18.66 && fontWeight >= 700);
+            const minimum = largeText ? 3 : 4.5;
+            if (ratio < minimum) {
+              issues.push({ type: 'contrast', element, ratio: ratio.toFixed(2), minimum });
+            }
+          }
+        }
+        if (element.parentElement && element.scrollWidth > element.parentElement.clientWidth + 1) {
+          issues.push({ type: 'overflow', element, scrollWidth: element.scrollWidth, parentWidth: element.parentElement.clientWidth });
+        }
+      });
+
+      /* SVG text overflow: flag <text> elements that exceed their containing <rect> */
+      document.querySelectorAll('svg').forEach((svg) => {
+        const allRects = Array.from(svg.querySelectorAll('rect'));
+        svg.querySelectorAll('text').forEach((textEl) => {
+          const bbox = textEl.getBBox();
+          /* Find the smallest rect that fully contains the text's origin point */
+          let bestRect = null;
+          let bestArea = Infinity;
+          for (const rect of allRects) {
+            const rx = parseFloat(rect.getAttribute('x') || 0);
+            const ry = parseFloat(rect.getAttribute('y') || 0);
+            const rw = parseFloat(rect.getAttribute('width') || 0);
+            const rh = parseFloat(rect.getAttribute('height') || 0);
+            /* Text origin must be inside the rect */
+            if (bbox.x >= rx && bbox.x <= rx + rw && bbox.y >= ry && bbox.y <= ry + rh) {
+              const area = rw * rh;
+              if (area < bestArea) {
+                bestArea = area;
+                bestRect = { x: rx, y: ry, w: rw, h: rh };
+              }
+            }
+          }
+          if (bestRect) {
+            const overflow = (bbox.x + bbox.width) - (bestRect.x + bestRect.w);
+            if (overflow > 2) {
+              issues.push({
+                type: 'svg-text-overflow',
+                element: textEl,
+                textContent: textEl.textContent,
+                textWidth: Math.round(bbox.width),
+                rectWidth: Math.round(bestRect.w),
+                overflow: Math.round(overflow),
+                suggestion: 'Widen rect to ' + Math.round(bestRect.w + overflow + 16) + 'px or shorten label'
+              });
+            }
+          }
+        });
+      });
+
+      document.querySelectorAll('table').forEach((table) => {
+        const style = getComputedStyle(table);
+        const wrapperHandlesOverflow = table.parentElement && getComputedStyle(table.parentElement).overflowX !== 'visible';
+        if (style.tableLayout !== 'fixed' && !wrapperHandlesOverflow) {
+          issues.push({ type: 'table-overflow-risk', element: table });
+        }
+      });
+
+      window.__htmlQualityIssues = issues.map((issue) => {
+        const base = {
+          type: issue.type,
+          element: issue.element ? issue.element.tagName.toLowerCase() + (issue.element.id ? '#' + issue.element.id : '') + (issue.element.className ? '.' + String(issue.element.className).trim().replace(/\s+/g, '.') : '') : undefined
+        };
+        if (issue.type === 'contrast') { base.ratio = issue.ratio; base.minimum = issue.minimum; }
+        if (issue.type === 'svg-text-overflow') {
+          base.text = issue.textContent;
+          base.textWidth = issue.textWidth;
+          base.rectWidth = issue.rectWidth;
+          base.overflow = issue.overflow;
+          base.suggestion = issue.suggestion;
+        }
+        return base;
+      });
+
+      if (issues.length) {
+        console.warn('HTML quality validator found issues:', window.__htmlQualityIssues);
+      } else {
+        console.info('HTML quality validator: no contrast or overflow issues detected.');
+      }
+
+      if (SHOW_BADGE) {
+        const badge = document.createElement('button');
+        badge.type = 'button';
+        badge.className = 'quality-badge' + (issues.length ? ' warn' : '');
+        badge.textContent = issues.length ? '⚠ ' + issues.length + ' issues' : '✓ Accessible';
+        badge.title = 'Click to hide quality badge. See console for validator details.';
+        badge.addEventListener('click', () => badge.remove());
+        document.body.appendChild(badge);
+      }
+    }());
+  </script>
+</body>
+</html>

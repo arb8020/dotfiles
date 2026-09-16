@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eval Harness API Survey — Shapes That Matter for Obol</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2333;
+    --border: #30363d;
+    --text: #c9d1d9;
+    --text-dim: #8b949e;
+    --accent: #58a6ff;
+    --accent2: #bc8cff;
+    --accent3: #7ee787;
+    --accent4: #ffa657;
+    --red: #f85149;
+    --mono: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  h1 { font-size: 1.8rem; margin-bottom: 0.3rem; color: #fff; }
+  h2 {
+    font-size: 1.3rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--accent);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.4rem;
+  }
+  h3 {
+    font-size: 1.05rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--accent2);
+  }
+  .subtitle { color: var(--text-dim); margin-bottom: 2rem; font-size: 0.95rem; }
+  p, li { margin-bottom: 0.6rem; font-size: 0.92rem; }
+  ul { padding-left: 1.4rem; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code {
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    background: var(--surface2);
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+  }
+  pre {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    overflow-x: auto;
+    margin: 0.8rem 0 1.2rem 0;
+    line-height: 1.5;
+  }
+  .tag {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-family: var(--mono);
+    padding: 0.15em 0.5em;
+    border-radius: 12px;
+    margin-right: 0.3rem;
+    vertical-align: middle;
+  }
+  .tag-simple { background: #1a3a2a; color: var(--accent3); }
+  .tag-product { background: #2a1a3a; color: var(--accent2); }
+  .tag-research { background: #3a2a1a; color: var(--accent4); }
+  .tag-rl { background: #3a1a1a; color: var(--red); }
+  .tag-gov { background: #1a2a3a; color: var(--accent); }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.2rem 1.4rem;
+    margin: 1rem 0;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.6rem;
+  }
+  .card-header h3 { margin: 0; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    margin: 1rem 0;
+  }
+  th, td {
+    padding: 0.5rem 0.7rem;
+    border: 1px solid var(--border);
+    text-align: left;
+  }
+  th { background: var(--surface2); color: var(--accent); font-weight: 600; }
+  td { background: var(--surface); }
+
+  .spectrum {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 1.5rem 0;
+    position: relative;
+  }
+  .spectrum-bar {
+    flex: 1;
+    height: 4px;
+    background: linear-gradient(to right, var(--accent3), var(--accent), var(--accent2), var(--accent4));
+    border-radius: 2px;
+  }
+  .spectrum-label {
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    position: absolute;
+    top: -1.2rem;
+  }
+  .spectrum-label.left { left: 0; }
+  .spectrum-label.right { right: 0; }
+
+  .callout {
+    border-left: 3px solid var(--accent4);
+    background: rgba(255, 166, 87, 0.06);
+    padding: 0.8rem 1rem;
+    margin: 1rem 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.88rem;
+  }
+  .callout-blue {
+    border-left-color: var(--accent);
+    background: rgba(88, 166, 255, 0.06);
+  }
+  .callout strong { color: #fff; }
+
+  .vs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+  @media (max-width: 700px) { .vs { grid-template-columns: 1fr; } }
+
+  .section-nav {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.4rem;
+    margin: 1.5rem 0;
+    font-size: 0.85rem;
+  }
+  .section-nav ol { padding-left: 1.4rem; }
+  .section-nav li { margin-bottom: 0.3rem; }
+</style>
+</head>
+<body>
+
+<h1>Eval Harness API Survey</h1>
+<p class="subtitle">
+  Concrete API shapes from 7 eval platforms, analyzed for what Obol should steal.
+  <br>June 2026 — cloned from source, not marketing docs.
+</p>
+
+<nav class="section-nav">
+  <strong>Contents</strong>
+  <ol>
+    <li><a href="#spectrum">The spectrum: script → framework → product</a></li>
+    <li><a href="#simple-evals">OpenAI simple-evals</a> — the lower bound</li>
+    <li><a href="#lm-eval">Eleuther lm-evaluation-harness</a> — YAML declarative</li>
+    <li><a href="#openai-evals">OpenAI evals (archived)</a> — registry pattern</li>
+    <li><a href="#inspect">UK AISI Inspect</a> — composable framework</li>
+    <li><a href="#braintrust">Braintrust</a> — product-grade hosted</li>
+    <li><a href="#tinker">Thinking Machines Tinker</a> — training-first</li>
+    <li><a href="#prime-rl">Prime Intellect prime-rl</a> — RL reward envs</li>
+    <li><a href="#verifiers">Prime Intellect verifiers</a> — eval + RL reward unified</li>
+    <li><a href="#openai-api">OpenAI Evals REST API</a> — hosted (deprecated)</li>
+    <li><a href="#comparison">Side-by-side comparison table</a></li>
+    <li><a href="#obol">Where Obol sits & what to steal</a></li>
+  </ol>
+</nav>
+
+<!-- ============================================================ -->
+<h2 id="spectrum">1. The Spectrum</h2>
+
+<p>Every eval harness sits somewhere on a spectrum from "just a script" to "hosted product with dashboards." The choices that matter:</p>
+
+<div class="spectrum">
+  <span class="spectrum-label left">Script</span>
+  <span class="spectrum-label right">Product</span>
+  <div class="spectrum-bar"></div>
+</div>
+
+<table>
+  <tr>
+    <th>Decision</th>
+    <th>Script end</th>
+    <th>Product end</th>
+  </tr>
+  <tr>
+    <td><strong>Config format</strong></td>
+    <td>Python code (simple-evals)</td>
+    <td>YAML/JSON + REST API (OpenAI)</td>
+  </tr>
+  <tr>
+    <td><strong>Eval definition</strong></td>
+    <td><code>class Eval: def __call__</code></td>
+    <td>Declarative spec + scorer registry</td>
+  </tr>
+  <tr>
+    <td><strong>Run submission</strong></td>
+    <td><code>eval_obj(sampler)</code></td>
+    <td><code>POST /v1/evals/{id}/runs</code></td>
+  </tr>
+  <tr>
+    <td><strong>Results</strong></td>
+    <td>JSON files on disk</td>
+    <td>Dashboard + experiment diffs</td>
+  </tr>
+  <tr>
+    <td><strong>Run tracking</strong></td>
+    <td>Timestamp in filename</td>
+    <td>SQLite/Postgres registry</td>
+  </tr>
+  <tr>
+    <td><strong>Granularity</strong></td>
+    <td>Maximum — you control everything</td>
+    <td>Minimum — the platform decides</td>
+  </tr>
+</table>
+
+<div class="callout">
+  <strong>Casey's granularity principle applies here:</strong> never supply a higher-level function
+  that can't be trivially replaced by a few lower-level functions that do the same thing.
+  The product layers should be <em>on top of</em> the script layers, not replacements.
+  Braintrust gets this right. OpenAI's hosted API got it wrong (no escape hatch to local).
+</div>
+
+<!-- ============================================================ -->
+<h2 id="simple-evals">2. OpenAI simple-evals</h2>
+<span class="tag tag-simple">simplest</span>
+<span class="tag tag-research">research</span>
+
+<p>67 lines of types. No config files, no registry, no CLI. The entire API surface:</p>
+
+<pre>
+<span style="color:var(--accent3)"># /tmp/simple-evals/types.py — the ENTIRE type system</span>
+
+@dataclass
+class SamplerResponse:
+    response_text: str
+    actual_queried_message_list: MessageList
+    response_metadata: dict[str, Any]
+
+class SamplerBase:
+    def __call__(self, message_list: MessageList) -> SamplerResponse: ...
+
+@dataclass
+class SingleEvalResult:
+    score: float | None
+    metrics: dict[str, float] = field(default_factory=dict)
+    html: str | None = None
+    convo: MessageList | None = None
+
+@dataclass
+class EvalResult:
+    score: float | None
+    metrics: dict[str, float] | None
+    htmls: list[str]
+    convos: list[MessageList]
+
+class Eval:
+    def __call__(self, sampler: SamplerBase) -> EvalResult: ...
+</pre>
+
+<pre>
+<span style="color:var(--accent3)"># Usage — that's it. Instantiate and call.</span>
+
+sampler = ChatCompletionSampler(model="gpt-5.5")
+result = MathEval(num_examples=100)(sampler)
+<span style="color:var(--text-dim)"># result.score -> 0.87, result.metrics -> {"exact_match": 0.87}</span>
+<span style="color:var(--text-dim)"># Written to /tmp/math_gpt-5.5_20260612.json</span>
+</pre>
+
+<h3>What's good</h3>
+<ul>
+  <li>Impossible to misunderstand. The entire contract is <code>Eval(sampler) → EvalResult</code>.</li>
+  <li>Maximum granularity — you can do anything inside your Eval class.</li>
+  <li>No framework lock-in. It's just dataclasses.</li>
+</ul>
+
+<h3>What's missing</h3>
+<ul>
+  <li>No run tracking. Results are loose files with timestamps.</li>
+  <li>No concurrency control. Each eval manages its own parallelism.</li>
+  <li>No config/code separation. Can't submit a run without modifying Python.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="lm-eval">3. Eleuther lm-evaluation-harness</h2>
+<span class="tag tag-research">research</span>
+<span class="tag tag-simple">declarative</span>
+
+<p>YAML-driven. The most widely used harness for open model benchmarking (leaderboard standard).</p>
+
+<pre>
+<span style="color:var(--accent3)"># lm_eval/tasks/gsm8k/gsm8k.yaml — a complete task definition</span>
+
+task: gsm8k
+dataset_path: openai/gsm8k
+dataset_name: main
+output_type: generate_until
+training_split: train
+test_split: test
+num_fewshot: 5
+
+doc_to_text: "Question: {{question}}\nAnswer:"
+doc_to_target: "{{answer}}"
+
+metric_list:
+  - metric: exact_match
+    aggregation: mean
+    higher_is_better: true
+    regexes_to_ignore:
+      - ","
+      - "\\$"
+      - "(?s).*#### "
+
+generation_kwargs:
+  until: ["Question:", "&lt;/s&gt;"]
+  temperature: 0.0
+
+filter_list:
+  - name: "strict-match"
+    filter:
+      - function: "regex"
+        regex_pattern: "#### (\\-?[0-9\\.\\,]+)"
+      - function: "take_first"
+</pre>
+
+<pre>
+<span style="color:var(--accent3)"># Python entry point</span>
+
+from lm_eval.evaluator import simple_evaluate
+
+results = simple_evaluate(
+    model="vllm",
+    model_args="pretrained=meta-llama/Llama-4-8B",
+    tasks=["gsm8k", "mmlu"],
+    num_fewshot=5,
+    batch_size="auto",
+    limit=100,            <span style="color:var(--text-dim)"># cap samples for dev</span>
+    log_samples=True,
+)
+<span style="color:var(--text-dim)"># results["results"]["gsm8k"]["exact_match,strict-match"] → 0.73</span>
+</pre>
+
+<pre>
+<span style="color:var(--accent3)"># Results schema (TypedDict)</span>
+
+EvalResults = {
+    "results":          dict[str, TaskMetrics],    <span style="color:var(--text-dim)"># per-task scores</span>
+    "configs":          dict[str, dict],           <span style="color:var(--text-dim)"># resolved YAML</span>
+    "versions":         dict[str, str | float],
+    "n-shot":           dict[str, int],
+    "higher_is_better": dict[str, dict[str, bool]],
+    "samples":          dict[str, list[SampleResult]],
+    "model_name":       str,
+}
+</pre>
+
+<h3>What's good</h3>
+<ul>
+  <li><strong>Declarative tasks.</strong> YAML is readable by non-engineers and diffable by git.</li>
+  <li><strong>Template strings</strong> (<code>{{question}}</code>) keep formatting separate from logic.</li>
+  <li><strong>Filter chains</strong> for answer extraction — composable post-processing.</li>
+  <li><strong>Standardized metrics.</strong> Everyone compares on the same definitions.</li>
+</ul>
+
+<h3>What's missing</h3>
+<ul>
+  <li>No agent support. It's prompt-in/text-out. Can't eval tool-using agents.</li>
+  <li>No sandbox/workspace concept. Tasks run in the harness process.</li>
+  <li>YAML configs get complex fast — <code>!function</code> tags, template inheritance.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="openai-evals">4. OpenAI evals (archived)</h2>
+<span class="tag tag-research">research</span>
+
+<p>Pioneered the registry pattern: YAML files map eval names to Python classes.
+Now archived, but the patterns influenced everyone after it.</p>
+
+<pre>
+<span style="color:var(--accent3)"># evals/registry/evals/language.yaml</span>
+
+hellaswag:
+  id: hellaswag.val.ab-v1
+  metrics: [accuracy]
+
+hellaswag.val.ab-v1:
+  class: evals.elsuite.multiple_choice:MultipleChoice
+  args:
+    dataset: hf://hellaswag?split=validation
+    instructions: "Choose the most plausible continuation."
+</pre>
+
+<pre>
+<span style="color:var(--accent3)"># Run spec — auto-generated, not user-written</span>
+
+@dataclass
+class RunSpec:
+    completion_fns: list[str]
+    eval_name: str
+    base_eval: str
+    split: str
+    run_config: dict[str, Any]
+    created_by: str
+    run_id: str = None     <span style="color:var(--text-dim)"># auto: timestamp + random</span>
+    created_at: str = None
+
+<span style="color:var(--accent3)"># Event-based recording</span>
+@dataclass
+class Event:
+    run_id: str
+    event_id: int
+    sample_id: str | None
+    type: str              <span style="color:var(--text-dim)"># "match" | "sampling" | "metrics" | "error"</span>
+    data: dict
+    created_by: str
+    created_at: str
+</pre>
+
+<h3>Key pattern: the registry</h3>
+<p>YAML maps names → classes. CLI resolves the name, instantiates the class, runs it.
+This is the <code>eval_name → class + args</code> indirection that lets you say
+<code>oaieval gpt-4 hellaswag</code> without knowing Python.</p>
+
+<div class="callout callout-blue">
+  <strong>The Event recorder</strong> is worth noting: every scoring decision, every sample,
+  every error is an <code>Event</code> with a <code>run_id</code>. This is proto-wide-events.
+  Obol already does this better with structured logging.
+</div>
+
+<!-- ============================================================ -->
+<h2 id="inspect">5. UK AISI Inspect</h2>
+<span class="tag tag-gov">gov-backed</span>
+<span class="tag tag-product">framework</span>
+
+<p>The most complete open-source eval framework. Composable solver/scorer/metric pipeline.
+200+ pre-built evals. The closest analog to what Obol could become.</p>
+
+<pre>
+<span style="color:var(--accent3)"># Task definition — decorator registers it</span>
+
+from inspect_ai import Task, task, eval
+from inspect_ai.dataset import hf_dataset
+from inspect_ai.scorer import model_graded_qa, accuracy, stderr
+from inspect_ai.solver import chain_of_thought, generate, self_critique
+
+@task
+def my_eval():
+    return Task(
+        dataset=hf_dataset("openai/gsm8k", split="test"),
+        solver=[
+            chain_of_thought(),   <span style="color:var(--text-dim)"># composable solver pipeline</span>
+            generate(),
+            self_critique(),
+        ],
+        scorer=model_graded_qa(),
+        metrics=[accuracy(), stderr()],
+        sandbox="docker",         <span style="color:var(--text-dim)"># tasks run in sandboxes</span>
+        epochs=3,
+        message_limit=50,
+        token_limit=100_000,
+        time_limit=300,
+    )
+</pre>
+
+<pre>
+<span style="color:var(--accent3)"># CLI</span>
+$ inspect eval my_eval.py --model openai/gpt-5.5 --max-connections 10
+
+<span style="color:var(--accent3)"># Programmatic</span>
+results: list[EvalLog] = await eval(
+    "my_eval.py",
+    model="openai/gpt-5.5",
+    max_samples=64,
+    max_connections=10,
+    log_dir="./logs",
+)
+
+<span style="color:var(--accent3)"># View results</span>
+$ inspect view
+</pre>
+
+<pre>
+<span style="color:var(--accent3)"># Task.__init__ signature — the full parameter space</span>
+
+Task(
+    dataset:       Dataset | Sequence[Sample] | None,
+    setup:         Solver | list[Solver] | None,       <span style="color:var(--text-dim)"># pre-eval setup</span>
+    solver:        Solver | Agent | list[Solver],      <span style="color:var(--text-dim)"># the agent/chain</span>
+    cleanup:       Callable | None,                    <span style="color:var(--text-dim)"># post-eval teardown</span>
+    scorer:        Scorer | list[Scorer] | None,
+    metrics:       list[Metric] | dict | None,
+    model:         str | Model | None,
+    config:        GenerateConfig,                     <span style="color:var(--text-dim)"># temperature, max_tokens, etc</span>
+    sandbox:       SandboxEnvironmentType | None,      <span style="color:var(--text-dim)"># docker, k8s, etc</span>
+    epochs:        int | Epochs | None,
+    fail_on_error: bool | float | None,
+    message_limit: int | None,
+    token_limit:   int | None,
+    time_limit:    int | None,
+    cost_limit:    float | None,
+    early_stopping: EarlyStopping | None,
+    name:          str | None,
+    version:       int | str,
+    metadata:      dict[str, Any] | None,
+    tags:          list[str] | None,
+)
+</pre>
+
+<h3>What's good</h3>
+<ul>
+  <li><strong>Solver composition.</strong> <code>[chain_of_thought(), generate(), self_critique()]</code> —
+    the agent pipeline is explicit and reorderable.</li>
+  <li><strong>Sandbox support</strong> (Docker, K8s) — tasks run in isolated environments.</li>
+  <li><strong>Granularity.</strong> You can use the full Task, or just a scorer, or just a dataset. Layers don't force you.</li>
+  <li><strong>Built-in viewer</strong> for results inspection.</li>
+  <li><strong>Epochs + reducers</strong> for statistical rigor (pass@k, mean, mode).</li>
+</ul>
+
+<h3>What's worth noting</h3>
+<ul>
+  <li>The <code>Task</code> constructor has ~20 parameters. It's at the edge of "too many knobs."</li>
+  <li>No experiment registry or run comparison built in — just log files.</li>
+  <li>The solver/scorer split maps well to Obol's runtime/verify split.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="braintrust">6. Braintrust</h2>
+<span class="tag tag-product">product</span>
+
+<p>The most product-oriented. TypeScript-first, hosted experiment tracking with diffs.
+This is what "hosted evals as a product" looks like.</p>
+
+<pre>
+<span style="color:var(--accent3)"># The core API — one function call</span>
+
+import { Eval } from "braintrust";
+
+Eval("my-eval", {
+  data: () => [
+    { input: "What is 2+2?", expected: "4" },
+    { input: "Capital of France?", expected: "Paris" },
+  ],
+
+  task: async (input) => {
+    const response = await openai.chat.completions.create({
+      model: "gpt-5.5",
+      messages: [{ role: "user", content: input }],
+    });
+    return response.choices[0].message.content;
+  },
+
+  scores: [Factuality, ExactMatch],
+
+  experimentName: "baseline-v1",
+  trialCount: 3,
+  maxConcurrency: 10,
+  metadata: { git_sha: "abc123" },
+});
+</pre>
+
+<pre>
+<span style="color:var(--accent3)"># The Evaluator interface (TypeScript generics)</span>
+
+interface Evaluator&lt;Input, Output, Expected, Metadata, Parameters&gt; {
+  data:             EvalData&lt;Input, Expected, Metadata&gt;;
+  task:             (input: Input, hooks: EvalHooks) => Promise&lt;Output&gt;;
+  scores?:          EvalScorer&lt;Input, Output, Expected, Metadata&gt;[];
+  experimentName?:  string;
+  trialCount?:      number;
+  maxConcurrency?:  number;
+  metadata?:        Record&lt;string, unknown&gt;;
+  tags?:            string[];
+  timeout?:         number;
+  baseExperimentName?: string;   <span style="color:var(--text-dim)"># compare against this</span>
+}
+
+<span style="color:var(--accent3)"># Score — same shape everywhere</span>
+type Score = {
+  name: string;
+  score: number | null;          <span style="color:var(--text-dim)"># 0-1</span>
+  metadata?: Record&lt;string, unknown&gt;;
+};
+</pre>
+
+<h3>What's good</h3>
+<ul>
+  <li><strong>Experiment diffs.</strong> <code>baseExperimentName</code> gives you "what changed since last run" for free.</li>
+  <li><strong>The <code>Eval()</code> function is the entire surface.</strong> Data, task, scores — three concerns, one call.</li>
+  <li><strong>Hosted tracking.</strong> Results go to a dashboard automatically. No file management.</li>
+  <li><strong>Score type is universal.</strong> <code>{name, score, metadata}</code> — every scorer returns the same shape.</li>
+</ul>
+
+<h3>What's worth noting</h3>
+<ul>
+  <li>TypeScript-first is a real choice. Python SDK exists but feels like a port.</li>
+  <li>Tight coupling to hosted service. Hard to use fully offline.</li>
+  <li>The generics (<code>Evaluator&lt;Input, Output, Expected, Metadata, Parameters&gt;</code>) are complex.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="tinker">7. Thinking Machines Tinker</h2>
+<span class="tag tag-rl">training-first</span>
+
+<p>Evals are a side feature of a training platform. The interesting pattern:
+evals bolt onto the training loop as inline evaluators.</p>
+
+<pre>
+<span style="color:var(--accent3)"># Standalone eval</span>
+
+from tinker_cookbook.eval.benchmarks import run_benchmarks, BenchmarkConfig
+
+results = await run_benchmarks(
+    ["gsm8k", "mmlu_pro", "ifeval", "mbpp", "math-500"],
+    sampling_client,
+    renderer,
+    BenchmarkConfig(
+        save_dir="evals/step500",
+        max_examples=200,
+        concurrency=64,
+        timeout_seconds=300,
+        max_tokens=32768,
+        temperature=0.6,
+        num_samples=1,
+    )
+)
+</pre>
+
+<pre>
+<span style="color:var(--accent3)"># Training-loop integration — evals as reward signals</span>
+
+<span style="color:var(--text-dim)"># BenchmarkEvaluator bridges benchmarks into training loops.</span>
+<span style="color:var(--text-dim)"># Returns dict[str, float] metrics at each checkpoint.</span>
+<span style="color:var(--text-dim)"># This is the pattern Prime-RL also uses (envs as reward).</span>
+</pre>
+
+<h3>What's interesting for Obol</h3>
+<ul>
+  <li><strong>Config sensitivity matters.</strong> They document that system prompts, max_tokens,
+    temperature, and timeout all shift scores significantly. Obol already captures this
+    in <code>SamplingParams</code>.</li>
+  <li><strong>Evals ↔ training loop.</strong> The <code>BenchmarkEvaluator</code> pattern
+    (eval returns <code>dict[str, float]</code> for the training loop to consume) is relevant
+    for Obol's future "eval → routing reward" pipeline.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="prime-rl">8. Prime Intellect prime-rl</h2>
+<span class="tag tag-rl">rl-training</span>
+
+<p>Not an eval harness — it's an RL training framework. But the env/verifier pattern
+is relevant because Obol's verify step is the same shape.</p>
+
+<pre>
+<span style="color:var(--accent3)"># Env config (Pydantic) — from prime-rl-configs</span>
+
+class EnvConfig(BaseConfig):
+    id: str = "reverse-text"
+    name: str | None = None
+    args: dict = {}                     <span style="color:var(--text-dim)"># forwarded to vf.load_environment</span>
+    num_workers: int | Literal["auto"] = "auto"
+    ratio: float | None = None          <span style="color:var(--text-dim)"># sampling weight across envs</span>
+    max_total_completion_tokens: int = -1
+    timeout: float | None = None
+    state_columns: list[str] = []
+</pre>
+
+<pre>
+<span style="color:var(--accent3)"># TOML config — training run with eval envs</span>
+
+[[orchestrator.train.env]]
+id = "math-env"
+name = "deepscaler"
+args = {
+    dataset_name = "agentica-org/DeepScaleR-Preview-Dataset",
+    question_key = "problem",
+    answer_key = "solution",
+    math_verify_max_workers = 128
+}
+</pre>
+
+<h3>The pattern</h3>
+<p><code>Environment</code> (from the <code>verifiers</code> library) is the same shape as
+Obol's <code>verify</code> function: take agent output, return a reward signal.
+The orchestrator distributes rollouts across ZMQ workers.
+The config is TOML with typed Pydantic models — stricter than YAML, less flexible than Python.</p>
+
+<!-- ============================================================ -->
+<h2 id="verifiers">9. Prime Intellect verifiers</h2>
+<span class="tag tag-rl">rl-native</span>
+<span class="tag tag-research">framework</span>
+
+<p>The actual eval/reward library underneath prime-rl. This is the most ambitious
+framework in the survey — it's trying to unify eval and RL reward into one abstraction.
+<strong>1400-line <code>Environment</code> base class.</strong> They're also doing a v1 rewrite.</p>
+
+<pre>
+<span style="color:var(--accent3)"># Core abstraction: Environment</span>
+<span style="color:var(--accent3)"># verifiers/envs/environment.py — 1400 lines</span>
+
+class Environment(ABC):
+    def __init__(
+        self,
+        dataset: Dataset | DatasetBuilder | None,
+        eval_dataset: Dataset | DatasetBuilder | None,
+        system_prompt: str | None,
+        parser: Parser | None,
+        rubric: Rubric | None,            <span style="color:var(--text-dim)"># scoring logic</span>
+        sampling_args: SamplingArgs | None,
+        tool_defs: list[Tool] | None,
+        max_workers: int = 512,
+        score_rollouts: bool = True,
+        pass_threshold: float = 0.5,
+    ): ...
+
+    @abstractmethod
+    async def rollout(
+        self,
+        input: RolloutInput,
+        client: Client,
+        model: str,
+        sampling_args: SamplingArgs | None,
+    ) -> State: ...
+
+    async def evaluate(
+        self,
+        client: Client | ClientConfig,
+        model: str,
+        num_examples: int = -1,
+        rollouts_per_example: int = 1,
+        max_concurrent: int = -1,
+        results_path: Path | None = None,
+        save_results: bool = False,
+    ) -> GenerateOutputs: ...
+</pre>
+
+<pre>
+<span style="color:var(--accent3)"># State — mutable dict with typed fields</span>
+<span style="color:var(--accent3)"># The rollout accumulates state as it goes</span>
+
+class State(dict):
+    INPUT_FIELDS = ["prompt", "answer", "info", "example_id"]
+
+    input: RolloutInput
+    client: Client
+    model: str
+    trajectory: list[TrajectoryStep]
+    completion: Messages | None
+    reward: float | None
+    metrics: dict[str, float] | None
+    timing: RolloutTiming | None
+    error: Error | None
+    is_completed: bool
+    is_truncated: bool
+    stop_condition: str | None
+</pre>
+
+<pre>
+<span style="color:var(--accent3)"># Rubric — scoring as composable reward functions</span>
+
+class Rubric:
+    """Each reward function takes (prompt, completion, answer, **kwargs) -> float"""
+
+    def add_reward_func(self, func: RewardFunc, weight: float = 1.0): ...
+    def add_metric(self, func: RewardFunc, weight: float = 0.0): ...
+    <span style="color:var(--text-dim)"># weight=0 means tracked but doesn't affect reward — same as Obol's Metric</span>
+</pre>
+
+<pre>
+<span style="color:var(--accent3)"># RolloutOutput — what comes back from a rollout</span>
+
+class RolloutOutput(dict):
+    example_id: int
+    prompt: Messages | None
+    completion: Messages | None
+    reward: float
+    timing: RolloutTiming
+    is_completed: bool
+    is_truncated: bool
+    metrics: dict[str, float]
+    error: ErrorData | None
+    token_usage: TokenUsage
+
+<span style="color:var(--accent3)"># GenerateOutputs — the final result</span>
+class GenerateOutputs(TypedDict):
+    outputs: list[RolloutOutput]
+    metadata: GenerateMetadata   <span style="color:var(--text-dim)"># env_id, model, avg_reward, pass@k, cost, timing</span>
+</pre>
+
+<pre>
+<span style="color:var(--accent3)"># Harbor taskset — sandboxed coding tasks (same tasks Obol uses)</span>
+
+class HarborTaskSet(SandboxTaskSet):
+    def __init__(self, task_dir: str | Path): ...
+    def get_sandbox_spec(self, info: dict) -> SandboxSpec: ...
+
+class HarborRubric(vf.Rubric):
+    async def solved(self, state, info, **kwargs) -> float:
+        <span style="color:var(--text-dim)"># runs tests in sandbox, parses output, returns 0.0 or 1.0</span>
+        test_output = await self.taskset._run_tests(sandbox_client, sandbox_id, state, timeout)
+        return float(self.taskset._calculate_reward(test_output, info))
+</pre>
+
+<pre>
+<span style="color:var(--accent3)"># EvalConfig — Pydantic config for eval runs</span>
+
+class EvalConfig(BaseModel):
+    env_id: str
+    env_args: dict
+    model: str
+    client_config: ClientConfig
+    sampling_args: SamplingArgs
+    num_examples: int
+    rollouts_per_example: int
+    max_concurrent: int
+    save_results: bool = False
+    output_dir: str | None = None
+
+class EvalRunConfig(BaseModel):
+    evals: list[EvalConfig]       <span style="color:var(--text-dim)"># multiple envs in one run</span>
+</pre>
+
+<pre>
+<span style="color:var(--accent3)"># ZMQ server — environments run as distributed workers</span>
+<span style="color:var(--accent3)"># env.start_server() spawns a ZMQ process; rollouts go over the wire</span>
+<span style="color:var(--accent3)"># This is for RL training: 1000s of rollouts per second across many workers</span>
+
+await env.start_server(num_workers=8)
+<span style="color:var(--text-dim)"># Now env.run_rollout() goes over ZMQ to a worker pool</span>
+<span style="color:var(--text-dim)"># Each worker has its own Environment instance</span>
+</pre>
+
+<h3>What's good</h3>
+<ul>
+  <li><strong>Unified eval + RL reward.</strong> <code>Environment.evaluate()</code> for benchmarking,
+    <code>Environment.run_rollout()</code> for training. Same code, same scoring.</li>
+  <li><strong>Rubric composition.</strong> <code>add_reward_func(fn, weight=1.0)</code> and
+    <code>add_metric(fn, weight=0.0)</code> — tracked metrics vs reward signals.
+    Same distinction as Obol's <code>Metric(weight=0)</code>.</li>
+  <li><strong>ZMQ server mode.</strong> Environments can run as distributed workers for RL.
+    If Obol ever feeds rewards into training, this is the shape.</li>
+  <li><strong>Resume support.</strong> <code>results_path</code> enables resuming interrupted eval runs
+    by loading existing outputs and filtering remaining inputs.</li>
+  <li><strong>Timing breakdown.</strong> <code>RolloutTiming</code> with setup/generation/scoring/model/env
+    phases — more granular than Obol's current timing.</li>
+</ul>
+
+<h3>What's concerning</h3>
+<ul>
+  <li><strong>1400-line base class.</strong> Environment does too much — dataset management,
+    client resolution, server lifecycle, rollout execution, result saving. Casey would
+    say this needs decomposition.</li>
+  <li><strong>Mutable State dict.</strong> <code>State(dict)</code> with typed fields that are actually
+    just dict keys — you get type annotations in the class but no enforcement.
+    The v1 rewrite adds <code>_set_internal()</code> guards but it's still fundamentally a mutable bag.</li>
+  <li><strong><code>**kwargs</code> everywhere.</strong> <code>Environment.__init__</code> ends with
+    <code>for key, value in kwargs.items(): setattr(self, key, value)</code>.
+    Explicitly against Obol's "explicit fields over **kwargs" norm.</li>
+  <li><strong>Granularity issues.</strong> You can't use Rubric without Environment.
+    You can't use the scoring without the rollout machinery. The layers are coupled.</li>
+</ul>
+
+<div class="callout">
+  <strong>The key insight for Obol:</strong> verifiers proves the eval↔RL-reward unification works
+  (same Environment, same Rubric). But the implementation couples too many concerns.
+  Obol's separation of <code>TaskSpec.verify</code> (scoring) from <code>TaskSpec.runtime</code> (agent execution)
+  is cleaner — keep it. If you need the RL bridge later, it's <code>verify → reward signal</code>,
+  not a rewrite.
+</div>
+
+<!-- ============================================================ -->
+<h2 id="openai-api">10. OpenAI Evals REST API (hosted, deprecated Nov 2026)</h2>
+<span class="tag tag-product">hosted</span>
+<span class="tag tag-rl">deprecated</span>
+
+<p>The only hosted REST API in the survey. Shows what the "fully productized" shape looks like.
+Being deprecated — instructive about what <em>not</em> to build too early.</p>
+
+<pre>
+<span style="color:var(--accent3)"># Create an eval</span>
+POST /v1/evals
+{
+  "name": "my-qa-eval",
+  "data_source_config": {
+    "type": "custom",
+    "item_schema": {
+      "type": "object",
+      "properties": {
+        "question": {"type": "string"},
+        "expected": {"type": "string"}
+      }
+    }
+  },
+  "testing_criteria": [
+    {
+      "type": "string_check",
+      "input": "{{sample.output}}",
+      "operation": "eq",
+      "reference": "{{item.expected}}"
+    }
+  ]
+}
+
+<span style="color:var(--accent3)"># Submit a run</span>
+POST /v1/evals/{eval_id}/runs
+{
+  "data_source": {
+    "type": "responses",
+    "model": "gpt-5.5",
+    "input_messages": {
+      "type": "template",
+      "template": [
+        {"role": "user", "content": "{{item.question}}"}
+      ]
+    },
+    "source": {"type": "file_id", "id": "file-abc123"}
+  }
+}
+
+<span style="color:var(--accent3)"># Get results</span>
+GET /v1/evals/{eval_id}/runs/{run_id}
+→ { result_counts, per_testing_criteria_results, token_usage, status }
+</pre>
+
+<h3>Why it's being deprecated</h3>
+<ul>
+  <li><strong>No escape hatch.</strong> You can't run evals locally. If the API goes down, you're stuck.</li>
+  <li><strong>Template-only.</strong> Complex scoring logic doesn't fit in <code>testing_criteria</code> JSON.</li>
+  <li><strong>Granularity hole.</strong> You can use the full hosted API or nothing.
+    No intermediate layer for "I want to define the eval in code but submit it remotely."</li>
+</ul>
+
+<div class="callout">
+  <strong>Lesson:</strong> Going straight to hosted REST API without a solid local-first
+  foundation is a mistake. OpenAI built the product layer before the framework layer
+  was mature, and now they're shutting it down.
+</div>
+
+<!-- ============================================================ -->
+<h2 id="comparison">11. Side-by-Side</h2>
+
+<table>
+  <tr>
+    <th></th>
+    <th>Config</th>
+    <th>Eval shape</th>
+    <th>Submission</th>
+    <th>Results</th>
+    <th>Registry</th>
+    <th>Agent support</th>
+  </tr>
+  <tr>
+    <td><strong>simple-evals</strong></td>
+    <td>Python code</td>
+    <td><code>Eval.__call__(sampler)</code></td>
+    <td>Direct call</td>
+    <td>JSON files</td>
+    <td>None</td>
+    <td>No</td>
+  </tr>
+  <tr>
+    <td><strong>lm-eval</strong></td>
+    <td>YAML</td>
+    <td><code>TaskConfig</code> dataclass</td>
+    <td>CLI / <code>simple_evaluate()</code></td>
+    <td><code>EvalResults</code> dict</td>
+    <td>YAML dir</td>
+    <td>No</td>
+  </tr>
+  <tr>
+    <td><strong>openai-evals</strong></td>
+    <td>YAML registry</td>
+    <td><code>Eval</code> ABC + <code>RunSpec</code></td>
+    <td>CLI <code>oaieval</code></td>
+    <td>Event stream</td>
+    <td>YAML → class</td>
+    <td>Limited</td>
+  </tr>
+  <tr>
+    <td><strong>Inspect</strong></td>
+    <td>Python <code>@task</code></td>
+    <td><code>Task(dataset, solver, scorer)</code></td>
+    <td>CLI / <code>eval()</code></td>
+    <td><code>EvalLog</code> + viewer</td>
+    <td>Decorator</td>
+    <td><strong>Yes</strong> (Agent)</td>
+  </tr>
+  <tr>
+    <td><strong>Braintrust</strong></td>
+    <td>TypeScript code</td>
+    <td><code>Eval(name, {data, task, scores})</code></td>
+    <td>CLI / direct call</td>
+    <td>Hosted dashboard</td>
+    <td>Hosted experiments</td>
+    <td>Via task fn</td>
+  </tr>
+  <tr>
+    <td><strong>Tinker</strong></td>
+    <td>Python code</td>
+    <td><code>run_benchmarks(names, client, config)</code></td>
+    <td>Direct call</td>
+    <td>Files + training metrics</td>
+    <td>None</td>
+    <td>No</td>
+  </tr>
+  <tr>
+    <td><strong>prime-rl</strong></td>
+    <td>TOML</td>
+    <td><code>EnvConfig</code> (Pydantic)</td>
+    <td>Orchestrator</td>
+    <td>Training rewards</td>
+    <td>None</td>
+    <td>Rollout agents</td>
+  </tr>
+  <tr>
+    <td><strong>verifiers</strong></td>
+    <td>Pydantic + Python</td>
+    <td><code>Environment(dataset, rubric)</code> + <code>rollout()</code></td>
+    <td><code>env.evaluate(client, model)</code> or ZMQ</td>
+    <td><code>GenerateOutputs</code> (outputs + metadata)</td>
+    <td>Resume via <code>results_path</code></td>
+    <td><strong>Yes</strong> (multi-turn, tools, sandbox)</td>
+  </tr>
+  <tr>
+    <td><strong>OpenAI API</strong></td>
+    <td>JSON (REST)</td>
+    <td><code>POST /v1/evals</code></td>
+    <td><code>POST /v1/evals/{id}/runs</code></td>
+    <td>REST + dashboard</td>
+    <td>Hosted</td>
+    <td>No</td>
+  </tr>
+  <tr style="background: rgba(88, 166, 255, 0.08);">
+    <td><strong>Obol (now)</strong></td>
+    <td>Python modules</td>
+    <td><code>TaskSpec(dataset, prepare, verify, runtime)</code></td>
+    <td>CLI <code>python -m obol --config X</code></td>
+    <td>Wide events JSONL + <code>WorkloadSummary</code></td>
+    <td>None (git + config hash)</td>
+    <td><strong>Yes</strong> (multi-runtime)</td>
+  </tr>
+</table>
+
+<!-- ============================================================ -->
+<h2 id="obol">12. Where Obol Sits & What to Steal</h2>
+
+<p>Obol is currently at the <strong>simple-evals/Inspect boundary</strong>: Python config modules,
+frozen dataclasses, direct CLI execution. The wide events and fingerprinting already go
+beyond what most harnesses have. The multi-runtime/multi-endpoint architecture is unique —
+none of the others support "run the same task through Pi, Codex, and Claude Code."</p>
+
+<h3>The path forward: layers, not rewrites</h3>
+
+<div class="callout callout-blue">
+  <strong>Casey's granularity rule:</strong> each new layer must be trivially replaceable
+  by the layer below it. <code>bool_button</code> on top of <code>push_button</code> on top of raw UI calls.
+</div>
+
+<div class="card">
+<div class="card-header">
+  <h3>Layer 0: RunSpec (exists)</h3>
+  <span class="tag tag-simple">keep as-is</span>
+</div>
+<p>Frozen, serializable, fully determines a run. This is the protocol.
+Equivalent to simple-evals' <code>Eval.__call__</code> contract.</p>
+<pre>
+RunSpec(
+    run_id, endpoints, workloads, output_dir, max_concurrent, skip_indices
+)
+</pre>
+<p><strong>Don't touch this.</strong> Everything else builds on top.</p>
+</div>
+
+<div class="card">
+<div class="card-header">
+  <h3>Layer 1: Experiment Registry (steal from nmoe + openai-evals)</h3>
+  <span class="tag tag-simple">next step</span>
+</div>
+<p>SQLite table tracking runs. Like nmoe's experiment registry,
+but simpler. Like openai-evals' <code>RunSpec</code> + <code>Event</code> recorder.</p>
+<pre>
+<span style="color:var(--accent3)"># Schema</span>
+CREATE TABLE runs (
+    run_id        TEXT PRIMARY KEY,
+    config_hash   TEXT NOT NULL,
+    config_json   TEXT NOT NULL,       <span style="color:var(--text-dim)"># serialized RunSpec</span>
+    git_sha       TEXT NOT NULL,
+    git_dirty     BOOLEAN NOT NULL,
+    config_module TEXT,
+    status        TEXT NOT NULL,       <span style="color:var(--text-dim)"># pending | running | ok | partial | failed</span>
+    started_at    TEXT,
+    ended_at      TEXT,
+    summary_json  TEXT,                <span style="color:var(--text-dim)"># serialized WorkloadSummary</span>
+    host          TEXT,                <span style="color:var(--text-dim)"># laptop | proxy</span>
+);
+</pre>
+<pre>
+<span style="color:var(--accent3)"># CLI usage (new commands, existing binary)</span>
+$ obol runs ls
+$ obol runs ls --status ok --model "Qwen*"
+$ obol runs show sweep_tb21_pi.kimi-k2.6
+$ obol runs compare run_a run_b
+</pre>
+<p>This is useful <strong>immediately</strong> — locally, before any remote execution.
+It gives you "what ran, with what config, from what commit" without grep.</p>
+</div>
+
+<div class="card">
+<div class="card-header">
+  <h3>Layer 2: Remote Submission (steal from Braintrust's simplicity)</h3>
+  <span class="tag tag-product">future</span>
+</div>
+<p>The thinnest possible HTTP wrapper. Not a new service architecture —
+just "accept a RunSpec over HTTP, spawn the same CLI, tail the events."</p>
+<pre>
+<span style="color:var(--accent3)"># Submit (from laptop)</span>
+$ obol submit --config obol.configs.sweep.baseline_tb21 --host proxy
+<span style="color:var(--text-dim)"># → Serializes RunSpec, POSTs to proxy, returns run_id</span>
+<span style="color:var(--text-dim)"># → proxy: python -m obol --config-json '...' (new flag)</span>
+
+<span style="color:var(--accent3)"># Or programmatic</span>
+POST http://proxy:8080/runs
+Content-Type: application/json
+{ "config_module": "obol.configs.sweep.baseline_tb21" }
+→ { "run_id": "sweep_tb21_pi.kimi-k2.6_a1b2c3d4", "status": "pending" }
+
+<span style="color:var(--accent3)"># Status (same registry, exposed over HTTP)</span>
+GET http://proxy:8080/runs/{run_id}
+→ { "status": "running", "summary": {...}, "events_url": "/runs/{id}/events" }
+
+<span style="color:var(--accent3)"># Stream events (SSE or JSONL — the wide_events.jsonl already exists)</span>
+GET http://proxy:8080/runs/{run_id}/events
+→ streaming JSONL (same format as the file)
+</pre>
+<p><strong>Key:</strong> <code>obol submit</code> is <code>bool_button</code> — it calls <code>push_button</code> (<code>obol --config X</code>)
+under the hood. You can always drop down to SSH + tmux.</p>
+</div>
+
+<div class="card">
+<div class="card-header">
+  <h3>Layer 3: Comparison & Dashboard (steal from Braintrust + Inspect)</h3>
+  <span class="tag tag-product">later</span>
+</div>
+<p>Braintrust's <code>baseExperimentName</code> is the killer feature: "show me what changed."
+Inspect's viewer is the reference for local results inspection.
+Both are powered by the data Obol already collects (wide events + summaries).</p>
+<pre>
+<span style="color:var(--accent3)"># Compare runs (CLI)</span>
+$ obol runs compare sweep_v1 sweep_v2
+┌────────────────────┬──────────┬──────────┬────────┐
+│ task               │ sweep_v1 │ sweep_v2 │ delta  │
+├────────────────────┼──────────┼──────────┼────────┤
+│ adaptive-rejection │ 0.0      │ 1.0      │ +1.0   │
+│ compile-compcert   │ 0.0      │ 0.0      │  —     │
+│ crack-7z-hash      │ 1.0      │ 1.0      │  —     │
+└────────────────────┴──────────┴──────────┴────────┘
+
+<span style="color:var(--accent3)"># Or: Grafana dashboard reading from the SQLite registry</span>
+<span style="color:var(--accent3)"># (the data's already there — just needs a view)</span>
+</pre>
+</div>
+
+<h3>What NOT to steal</h3>
+
+<ul>
+  <li><strong>YAML configs</strong> (lm-eval). Python modules are strictly more powerful,
+    and Obol's configs are already clean. YAML adds a parser/validator layer for no gain
+    when your users are you.</li>
+  <li><strong>Hosted-first API</strong> (OpenAI Evals API). They built the REST API before the
+    local framework was solid, and it's being deprecated. Local-first, remote-later.</li>
+  <li><strong>TypeScript</strong> (Braintrust). The <code>Eval(name, {data, task, scores})</code> shape
+    is great; the language choice is not relevant.</li>
+  <li><strong>Complex solver composition</strong> (Inspect). Obol's runtimes (Pi, Codex, CC)
+    are already more flexible than Inspect's solver chains. Don't add a solver registry.</li>
+</ul>
+
+<h3>Immediate sequencing recommendation</h3>
+
+<ol>
+  <li><strong>Experiment registry (SQLite)</strong> — useful today, locally. <code>obol runs ls/show/compare</code>.</li>
+  <li><strong>RunSpec JSON serialization</strong> — <code>--config-json</code> flag so the proxy can receive a spec without importing Python modules.</li>
+  <li><strong>Clone obol to proxy box</strong> — <code>uv sync</code>, tmux, run sweeps. No HTTP layer needed yet.</li>
+  <li><strong>Thin HTTP wrapper</strong> — when "SSH and tmux" becomes annoying. Not before.</li>
+</ol>
+
+<div class="callout">
+  <strong>Sean Goedecke's system design principle applies:</strong> "good design looks like nothing going wrong
+  for a long time." The experiment registry is the one piece that's genuinely missing. Everything
+  else — remote submission, dashboards, comparison — can be built on top of it when the pain is real.
+</div>
+
+</body>
+</html>
